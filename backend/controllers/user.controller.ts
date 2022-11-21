@@ -13,7 +13,7 @@ export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
         const allUsers = await client.query('SELECT * from users ORDER BY id DESC')
         res.status(200).json(allUsers.rows);
     } catch (error) {
-        console.error(error);
+        res.status(400)
         throw error;
     }
 })
@@ -42,7 +42,7 @@ export const addUser = asyncHandler(async (req: Request, res: Response) => {
         const newUser = await client.query(query);   
         res.status(201).json(newUser.rows);
     } catch (error) {
-        console.error(error);
+        res.status(400)
         throw error;
     }
     
@@ -60,7 +60,7 @@ export const getSingleUser = asyncHandler(async (req: Request, res: Response) =>
         else res.status(200).json(user.rows);
 
     } catch (error) {
-        console.error(error);
+        res.status(400)
         throw error;
     }
 })
@@ -91,7 +91,7 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
         else res.status(200).json(updatedUser);
 
     } catch (error) {
-        console.error(error);
+        res.status(400)
         throw error;
     }
 })
@@ -108,7 +108,7 @@ export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
         else res.status(200).json({message: `Deleted user with id: ${req.params.id}`});
 
     } catch (error) {
-        console.error(error);
+        res.status(400)
         throw error;
     }
 })
