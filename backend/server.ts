@@ -11,7 +11,7 @@ const port: number = Number(process.env.PORT);
 app.use(cors());
 app.use(express.json());
 
-// Pathns
+// Routes
 app.use('/api/', require('./routes/user.route'));
 
 
