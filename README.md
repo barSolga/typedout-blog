@@ -1,4 +1,4 @@
-# [HJE8ZKP.png](https://iili.io/HJE8ZKP.png)
+# ![HJEQxYQ.png](https://iili.io/HJEQxYQ.png)
 ## TYPEDOUT - redit clone
 ### Scenerios
 icons: [☑ | ☒]
