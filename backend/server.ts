@@ -11,10 +11,12 @@ const port: number = Number(process.env.PORT);
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.use('/api/', require('./routes/user.route'));
+// Imported routes
+app.use('/api/users/', require('./routes/user.route'));
+// app.use('/api/', require('./routes/thread.route'));
 
 
+// API Health check
 app.get('/api/status', (req: Request, res: Response) => {
     res.status(200).json({
         message: 'OK'

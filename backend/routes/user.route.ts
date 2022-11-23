@@ -1,8 +1,10 @@
 import express, {Router} from 'express';
+import {protect} from '../middleware/auth.middleware';
 
 import {
+    registerUser,
+    loginUser,
     getAllUsers,
-    addUser,
     getSingleUser,
     updateUser,
     deleteUser
@@ -11,8 +13,9 @@ import {
 const router: Router = express.Router();
 
 
-router.route('/users').get(getAllUsers).post(addUser);
-router.route('/users/:id').get(getSingleUser).put(updateUser).delete(deleteUser);
+router.get('/login', loginUser);
+router.route('/').get(protect, getAllUsers).post(registerUser);
+router.route('/:id').get(protect, getSingleUser).put(protect, updateUser).delete(protect, deleteUser);
 
 
 module.exports = router;

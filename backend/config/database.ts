@@ -4,11 +4,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Database details
-const DB_USERNAME: string | undefined = process.env.DB_USERNAME;
-const DB_HOST: string | undefined = process.env.DB_HOST;
-const DB_PASSWORD: string | undefined = process.env.DB_PASSWORD;
-const DB_NAME: string | undefined = process.env.DB_NAME;
-const DB_PORT: number | undefined = Number(process.env.DB_PORT);
+const DB_USERNAME = process.env.DB_USERNAME as string;
+const DB_HOST = process.env.DB_HOST as string;
+const DB_PASSWORD = process.env.DB_PASSWORD as string;
+const DB_NAME = process.env.DB_NAME as string;
+const DB_PORT = Number(process.env.DB_PORT) as number;
 
 
 export const client: Client = new Client({
