@@ -1,21 +1,23 @@
 # ![HJEQxYQ.png](https://iili.io/HJEQxYQ.png)
 ## TYPEDOUT - redit clone
 ### Scenerios
-icons: [☑ | ☒]
+icons: [☑ - completed | ☒ - in progress]
 
 DONE: <br>
-☑ 1. User can register account<br>
-☑ 2. User can update his profile<br>
-☑ 3. User can remove his profile<br>
+☑  1. User can register account<br>
+☑  2. User can update his profile<br>
+☑  3. User can remove his profile<br>
+☑  4. User can login/logout<br>
+☑  5. Added user roles<br>
 
 IN PROGRESS:<br>
-☒ 4. User can login/logout<br>
-☒ 5. User can view all threads and comment them<br>
-☒ 6. User can create Thread<br>
-☒ 7. User can create category if it wasn`t defined in the past<br>
-☒ 8. Users can rate comments<br>
-☒ 9. User can comment other users threads<br>
-☒ 10. Categories contain multiple threads<br>
-☒ 11. Each thread can be commented by many users
+☒  6. User can create category if it wasn`t defined in the past<br>
+☒  7. User can create Thread<br>
+☒  8. Users can view all threads<br>
+☒  9. Users can comment threads<br>
+☒ 10. Users can rate comments<br>
+☒ 11. Categories contain multiple threads<br>
+☒ 12. Each thread can be commented by many users<br>
+
 
 

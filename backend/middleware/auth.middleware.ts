@@ -16,8 +16,8 @@ export const protect = asyncHandler(async (req: IUserRequest, res:Response, next
 
             // Verify token
             const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+            
             // Get user from the token
-            // req.user = await User.findById(decoded.email).select('-password');
             const user = await client.query('SELECT * from users WHERE email=($1)', [decoded.email])
             req.user = {
                 ...user.rows[0],
