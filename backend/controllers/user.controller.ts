@@ -11,7 +11,7 @@ enum Roles {
     regular = 3
 }
 
-const JWT_EXPIRES_IN = process.env.EXPIRES_IN as string;
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN as string;
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 // * DONE
@@ -41,18 +41,28 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
         throw new Error('Please add all fields')
     }
 
+    // check if passwords match
     if (password !== password2) {
         res.status(400)
         throw new Error('Passwords do not match')
     }
 
-    // Check if user exists
+    // Check if user with email exists
     const userExists = await client.query('SELECT * from users WHERE email=($1)', [email]);
 
     if (userExists.rowCount > 0) {
         res.status(400)
-        throw new Error('User already exists')
+        throw new Error('User with specified email already exists')
     }
+
+    // Check if username is available
+    const usernameCheck = await client.query('SELECT * from users WHERE username=($1)', [username]);
+
+    if(usernameCheck.rowCount > 0) {
+        res.status(400)
+        throw new Error('User with specified username already exists')
+    }
+
 
     // Encrypt password
     const salt = await bcrypt.genSalt(10);
@@ -142,8 +152,8 @@ export const getSingleUser = asyncHandler(async (req: IUserRequest, res: Respons
     if(req.user.role_id !== Roles.admin) {
         // Check if user accesses his details
         if(Number(req.params.id) !== req.user.user_id) {
-            res.status(403).json({message: 'Not Authorized!'})
-            return
+            res.status(403)
+            throw new Error('Not Authorized!')
         }
     }
 
@@ -165,29 +175,49 @@ export const getSingleUser = asyncHandler(async (req: IUserRequest, res: Respons
 // @route   PUT /api/users/:id
 // @access  * ~ private
 export const updateUser = asyncHandler(async (req: IUserRequest, res: Response) => {
-    const {username, email, password} = req.body;
+    const {username, email, password, password2} = req.body;
     
-    // check if user provided required data
-    if (!username || !email || !password) {
-        res.status(400)
-        throw new Error('Please add all fields')
-    }
-
     // Check if user is admin
     if(req.user.role_id !== Roles.admin) {
         // Check if user accesses his details
         if(Number(req.params.id) !== req.user.user_id) {
-            res.status(403).json({message: 'Not Authorized!'})
-            return
+            res.status(403)
+            throw new Error('Not Authorized!')
         }
     }
+
+    // check if user provided required data
+    if (!username || !email || !password || !password2) {
+        res.status(400)
+        throw new Error('Please add all fields')
+    }
+
+    // Check if username is available
+    const usernameCheck = await client.query('SELECT * from users WHERE username=($1)', [username]);
+
+    if(usernameCheck.rowCount > 0) {
+        if(usernameCheck.rows[0].username !== req.user.username) {
+            res.status(400)
+            throw new Error('User with specified username already exists')
+        }  
+    }
+
+    // check if passwords match
+    if (password !== password2) {
+        res.status(400)
+        throw new Error('Passwords do not match')
+    }
+
+    // Encrypt password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const query = `
         UPDATE users 
         SET 
         username= '${username}', 
         email= '${email}',
-        password= '${password}',
+        password= '${hashedPassword}'
         WHERE user_id = ${req.params.id}
     `
     
@@ -214,8 +244,8 @@ export const deleteUser = asyncHandler(async (req: IUserRequest, res: Response) 
     if(req.user.role_id !== Roles.admin) {
         // Check if user accesses his details
         if(Number(req.params.id) !== req.user.user_id) {
-            res.status(403).json({message: 'Not Authorized!'})
-            return
+            res.status(403)
+            throw new Error('Not Authorized!')
         }
     }
 
