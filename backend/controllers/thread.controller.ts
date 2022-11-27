@@ -11,56 +11,11 @@ enum Roles {
 
 // * DONE add pagination to threads
 // TODO 
-// ? get all Threads
-// ? GET all moderated Threads
-// ? GET all unmoderated Threads
+// ? GET all Threads
 // ? GET accepted Threads
-// ? GET Threads by category
-// ? Paginate all req for threads
+// * GET Threads by category
+// * Paginate all req for threads
 
-
-// * DONE
-// @desc    Get all threads
-// @route   GET /api/threads?page=1&size=5
-// @access  * ~ open to everybody
-export const getAllThreads = asyncHandler(async (req: IUserRequest, res: Response) => {
-
-    let query: string;
-    let countItems;
-    const page = req.query.page;
-    const size = req.query.size;
-    
-    countItems = await client.query(`
-        SELECT COUNT(*) 
-        FROM Threads
-    `);
-
-    query = `
-        SELECT Threads.*, Users.username, Categories.category_name
-        FROM Threads 
-        LEFT JOIN Users ON Threads.user_id = Users.user_id
-        LEFT JOIN Categories ON Threads.category_id = Categories.category_id
-        ORDER BY thread_id DESC
-        LIMIT ${size}
-        OFFSET ((${page} - 1) * ${size})
-    ` 
-    
-    const totalItems = Number(countItems.rows[0].count);
-    const totalPages = Math.ceil(totalItems / Number(size));
-
-
-    try {
-        const allItems = await client.query(query);
-        res.status(200).json({
-            totalItems: totalItems,
-            items: allItems.rows,
-            totalPages: totalPages,
-            currentPage: page
-        });
-    } catch (error) {
-        throw error
-    }
-});
 
 // * DONE
 // @desc    Add threads
@@ -178,19 +133,65 @@ export const deleteThread = asyncHandler(async (req: IUserRequest, res: Response
 
 // * DONE
 // @desc    Get all threads
-// @route   GET /api/threads
+// @route   GET /api/threads/?page=[]&size=[]
+// @access  * ~ open to everybody
+export const getAllThreads = asyncHandler(async (req: IUserRequest, res: Response) => {
+
+    let query: string;
+    let countItems;
+    const page = req.query.page;
+    const size = req.query.size;
+    
+    countItems = await client.query(`
+        SELECT COUNT(*) 
+        FROM Threads
+    `);
+
+    query = `
+        SELECT Threads.*, Users.username, Categories.category_name
+        FROM Threads 
+        LEFT JOIN Users ON Threads.user_id = Users.user_id
+        LEFT JOIN Categories ON Threads.category_id = Categories.category_id
+        ORDER BY thread_id DESC
+        LIMIT ${size}
+        OFFSET ((${page} - 1) * ${size})
+    ` 
+    
+    const totalItems = Number(countItems.rows[0].count);
+    const totalPages = Math.ceil(totalItems / Number(size));
+
+
+    try {
+        const allItems = await client.query(query);
+        res.status(200).json({
+            totalItems: totalItems,
+            items: allItems.rows,
+            totalPages: totalPages,
+            currentPage: page
+        });
+    } catch (error) {
+        throw error
+    }
+});
+
+// * DONE
+// @desc    Get all threads
+// @route   GET /api/threads/search/?query=[?]&page=[?]&size=[?]
 // @access  * ~ open to everybody
 export const searchThreads = asyncHandler(async (req: IUserRequest, res: Response) => {
 
     const searchTitle = req.query.query;
+    const page = req.query.page;
+    const size = req.query.size;
 
-    console.log(searchTitle);
     
     const countItems = await client.query(`
         SELECT COUNT(*) 
         FROM Threads 
-        WHERE thread_title 
-        LIKE '%${searchTitle}%'
+        WHERE 
+        (LOWER(thread_title) LIKE '%${searchTitle}%') 
+        OR 
+        (LOWER(thread_body) LIKE '%${searchTitle}%') 
     `);
 
     const query = `
@@ -198,17 +199,25 @@ export const searchThreads = asyncHandler(async (req: IUserRequest, res: Respons
         FROM Threads 
         LEFT JOIN Users ON Threads.user_id = Users.user_id
         LEFT JOIN Categories ON Threads.category_id = Categories.category_id
-        WHERE thread_title
-        LIKE '%${searchTitle}%'
+        WHERE 
+        (LOWER(thread_title) LIKE '%${searchTitle}%') 
+        OR 
+        (LOWER(thread_body) LIKE '%${searchTitle}%') 
+        LIMIT ${size}
+        OFFSET ((${page} - 1) * ${size})
+        
     ` 
 
     const totalItems = Number(countItems.rows[0].count);
+    const totalPages = Math.ceil(totalItems / Number(size));
 
     try {
         const allItems = await client.query(query);
         res.status(200).json({
             totalItems: totalItems,
-            items: allItems.rows
+            items: allItems.rows,
+            totalPages: totalPages,
+            currentPage: page
         });
     } catch (error) {
         throw error
@@ -217,7 +226,7 @@ export const searchThreads = asyncHandler(async (req: IUserRequest, res: Respons
 
 // * DONE
 // @desc    Get threads by categories
-// @route   GET /api/threads/categories/:id/?page=1&size=5
+// @route   GET /api/threads/categories/:id/?page=[?]&size=[?]
 // @access  * ~ open to everybody
 export const getThreadsForCategory = asyncHandler(async (req: IUserRequest, res: Response) => {
 
@@ -226,8 +235,6 @@ export const getThreadsForCategory = asyncHandler(async (req: IUserRequest, res:
     const category_id = req.params.id;
     const page = req.query.page;
     const size = req.query.size;
-
-
     
     countItems = await client.query(
         `SELECT COUNT(*) 
@@ -262,3 +269,9 @@ export const getThreadsForCategory = asyncHandler(async (req: IUserRequest, res:
         throw error
     }
 });
+
+
+
+// TODO ENDPOINTS FOR MAINTENANCE PANEL
+// ? GET all moderated Threads
+// ? GET all unmoderated Threads
