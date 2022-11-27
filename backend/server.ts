@@ -25,6 +25,7 @@ app.get('/api/status', (req: Request, res: Response) => {
     });
 });
 
+
 app.use(errorHandler);
 
 app.listen(port, () => {

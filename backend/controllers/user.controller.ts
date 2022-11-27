@@ -11,6 +11,9 @@ enum Roles {
     regular = 3
 }
 
+// TODO
+// ? write tests for created routes [start from user]
+
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN as string;
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
