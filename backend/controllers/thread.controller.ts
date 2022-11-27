@@ -11,13 +11,14 @@ enum Roles {
 
 // * DONE add pagination to threads
 // TODO 
-// ? GET all Threads
-// ? GET accepted Threads
+// * GET accepted Threads
+// * GET unaccepted Threads
 // * GET Threads by category
 // * Paginate all req for threads
 
+// * ================ DATA MANIPULTE ENDPOINTS ===================
 
-// * DONE
+// TODO VVV 
 // @desc    Add threads
 // @route   POST /api/threads
 // @access  * ~ protected / users
@@ -131,11 +132,14 @@ export const deleteThread = asyncHandler(async (req: IUserRequest, res: Response
     }
 });
 
+
+// * ================ GET DATA ENDPOINTS =========================
+
 // * DONE
 // @desc    Get all threads
 // @route   GET /api/threads/?page=[]&size=[]
 // @access  * ~ open to everybody
-export const getAllThreads = asyncHandler(async (req: IUserRequest, res: Response) => {
+export const getAllAcceptedThreads = asyncHandler(async (req: IUserRequest, res: Response) => {
 
     let query: string;
     let countItems;
@@ -145,6 +149,7 @@ export const getAllThreads = asyncHandler(async (req: IUserRequest, res: Respons
     countItems = await client.query(`
         SELECT COUNT(*) 
         FROM Threads
+        WHERE Threads.is_approved=true
     `);
 
     query = `
@@ -152,6 +157,7 @@ export const getAllThreads = asyncHandler(async (req: IUserRequest, res: Respons
         FROM Threads 
         LEFT JOIN Users ON Threads.user_id = Users.user_id
         LEFT JOIN Categories ON Threads.category_id = Categories.category_id
+        WHERE Threads.is_approved=true
         ORDER BY thread_id DESC
         LIMIT ${size}
         OFFSET ((${page} - 1) * ${size})
@@ -178,7 +184,7 @@ export const getAllThreads = asyncHandler(async (req: IUserRequest, res: Respons
 // @desc    Get all threads
 // @route   GET /api/threads/search/?query=[?]&page=[?]&size=[?]
 // @access  * ~ open to everybody
-export const searchThreads = asyncHandler(async (req: IUserRequest, res: Response) => {
+export const searchAcceptedThreads = asyncHandler(async (req: IUserRequest, res: Response) => {
 
     const searchTitle = req.query.query;
     const page = req.query.page;
@@ -188,10 +194,13 @@ export const searchThreads = asyncHandler(async (req: IUserRequest, res: Respons
     const countItems = await client.query(`
         SELECT COUNT(*) 
         FROM Threads 
-        WHERE 
-        (LOWER(thread_title) LIKE '%${searchTitle}%') 
-        OR 
-        (LOWER(thread_body) LIKE '%${searchTitle}%') 
+        WHERE Threads.is_approved=true
+        AND
+        (
+            (LOWER(thread_title) LIKE '%${searchTitle}%') 
+            OR 
+            (LOWER(thread_body) LIKE '%${searchTitle}%') 
+        )
     `);
 
     const query = `
@@ -199,10 +208,13 @@ export const searchThreads = asyncHandler(async (req: IUserRequest, res: Respons
         FROM Threads 
         LEFT JOIN Users ON Threads.user_id = Users.user_id
         LEFT JOIN Categories ON Threads.category_id = Categories.category_id
-        WHERE 
-        (LOWER(thread_title) LIKE '%${searchTitle}%') 
-        OR 
-        (LOWER(thread_body) LIKE '%${searchTitle}%') 
+        WHERE Threads.is_approved=true
+        AND
+        (
+            (LOWER(thread_title) LIKE '%${searchTitle}%') 
+            OR 
+            (LOWER(thread_body) LIKE '%${searchTitle}%') 
+        )
         LIMIT ${size}
         OFFSET ((${page} - 1) * ${size})
         
@@ -236,10 +248,10 @@ export const getThreadsForCategory = asyncHandler(async (req: IUserRequest, res:
     const page = req.query.page;
     const size = req.query.size;
     
-    countItems = await client.query(
-        `SELECT COUNT(*) 
+    countItems = await client.query(`
+        SELECT COUNT(*) 
         FROM Threads 
-        WHERE category_id=${category_id}
+        WHERE category_id=${category_id} AND Threads.is_approved=true
     `);
 
     query = `
@@ -247,7 +259,7 @@ export const getThreadsForCategory = asyncHandler(async (req: IUserRequest, res:
         FROM Threads 
         LEFT JOIN Users ON Threads.user_id = Users.user_id
         LEFT JOIN Categories ON Threads.category_id = Categories.category_id
-        WHERE Threads.category_id=${category_id}
+        WHERE Threads.category_id=${category_id} AND Threads.is_approved=true
         ORDER BY thread_id DESC
         LIMIT ${size}
         OFFSET ((${page} - 1) * ${size})
@@ -272,6 +284,57 @@ export const getThreadsForCategory = asyncHandler(async (req: IUserRequest, res:
 
 
 
-// TODO ENDPOINTS FOR MAINTENANCE PANEL
-// ? GET all moderated Threads
-// ? GET all unmoderated Threads
+// * ================ ENDPOINTS FOR MAINTENANCE PANEL ============
+
+// * DONE
+// @desc    Get all threads
+// @route   GET /api/threads/unaccepted/?page=[]&size=[]
+// @access  * ~ open to everybody
+export const getAllUnacceptedThreads = asyncHandler(async (req: IUserRequest, res: Response) => {
+
+    let query: string;
+    let countItems;
+    const page = req.query.page;
+    const size = req.query.size;
+
+    // Check if user is admin or moderator
+    if(req.user.role_id !== Roles.admin) {
+        if(req.user.role_id !== Roles.moderator) {
+            res.status(403)
+            throw new Error('Not Authorized!')
+        }
+    }
+    
+    countItems = await client.query(`
+        SELECT COUNT(*) 
+        FROM Threads
+        WHERE Threads.is_approved=false
+    `);
+
+    query = `
+        SELECT Threads.*, Users.username, Categories.category_name
+        FROM Threads 
+        LEFT JOIN Users ON Threads.user_id = Users.user_id
+        LEFT JOIN Categories ON Threads.category_id = Categories.category_id
+        WHERE Threads.is_approved=false
+        ORDER BY thread_id DESC
+        LIMIT ${size}
+        OFFSET ((${page} - 1) * ${size})
+    ` 
+    
+    const totalItems = Number(countItems.rows[0].count);
+    const totalPages = Math.ceil(totalItems / Number(size));
+
+
+    try {
+        const allItems = await client.query(query);
+        res.status(200).json({
+            totalItems: totalItems,
+            items: allItems.rows,
+            totalPages: totalPages,
+            currentPage: page
+        });
+    } catch (error) {
+        throw error
+    }
+});

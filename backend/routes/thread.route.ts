@@ -2,20 +2,35 @@ import express, {Router} from 'express';
 import {protect} from '../middleware/auth.middleware';
 
 import {
-    getAllThreads,
+    // 
     addThread,
     updateThread,
     deleteThread,
-    searchThreads,
-    getThreadsForCategory
+    // 
+    getAllAcceptedThreads,
+    searchAcceptedThreads,
+    getThreadsForCategory,
+    // 
+    getAllUnacceptedThreads,
+    
 } from '../controllers/thread.controller'
 
 const router: Router = express.Router();
 
-router.route('/').get(getAllThreads).post(protect, addThread);
-router.route('/:id').put(protect, updateThread).delete(protect, deleteThread);
-router.route('/search').get(searchThreads);
+// PROTECTED DATA MANIPULATION ROUTES
+router.route('/').post(protect, addThread);
+router.route('/:id').put(protect, updateThread);
+router.route('/:id').delete(protect, deleteThread);
+
+// USER OPEN GET DATA ROUTES
+router.route('/').get(getAllAcceptedThreads);
+router.route('/search').get(searchAcceptedThreads);
 router.route('/category/:id').get(getThreadsForCategory);
+
+// MAINTENANCE DATA MANIPULATION ROUTES
+router.route('/unaccepted').get(protect, getAllUnacceptedThreads);
+
+
 
 
 module.exports = router;
