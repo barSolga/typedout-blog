@@ -12,6 +12,7 @@ enum Roles {
 }
 
 // TODO
+// ? password strength check & email check
 // ? write tests for created routes [start from user]
 
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN as string;
@@ -76,7 +77,7 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
         INSERT INTO users (username, email, password, role_id) 
         VALUES (
             '${username}', 
-            '${email}',
+            '${email.toLowerCase()}',
             '${hashedPassword}',
             '${role_id}'
         )
@@ -87,8 +88,7 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
     try {
         const newUser = await client.query(query);   
         res.status(201).json({
-            token: generateToken(email),
-            details: {...newUser.rows[0]}
+            token: generateToken(email)
         });
     } catch (error) {
         res.status(400)
@@ -105,7 +105,7 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     const { email, password } = req.body;
   
     // Check for user email
-    const data = await client.query('SELECT * from users WHERE email=($1)', [email]);
+    const data = await client.query('SELECT * from users WHERE email=($1)', [email.toLowerCase()]);
     const user: IUser = data.rows[0];
 
     // Check if user is exists 
@@ -116,7 +116,6 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   
     if (user && (await bcrypt.compare(password, user.password))) {
       res.json({
-        ...user,
         token: generateToken(user.email),
       })
     } else {
@@ -263,4 +262,16 @@ export const deleteUser = asyncHandler(async (req: IUserRequest, res: Response) 
         res.status(400)
         throw error;
     }
+})
+
+// @desc    Get user data
+// @route   GET /api/users/me
+// @access  Private
+export const getMe = asyncHandler(async (req: IUserRequest, res: Response) => {
+    res.status(200).json({
+        user_id: req.user.user_id,
+        username: req.user.username,
+        email: req.user.email,
+        role_id: req.user.role_id
+    });
 })

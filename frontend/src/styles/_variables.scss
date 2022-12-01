@@ -1,0 +1,67 @@
+:root {
+    // Colors
+    // Primary
+    --primary-color: #9EA8FF;
+    --text-color: #4E4E4E;
+    --light-text-color: #fff;
+    --gradient: linear-gradient(-154.77deg, #45BCFF 8.42%, #9EA8FF 45.21%, #EAD0FF 101.07%);
+    --background-color: #f5f5f5;
+    --strong-color: #ffff;
+    --dimmed-items: #B6B6B6;
+
+    // marker colors
+    --act1-color: #FF7474;
+    --act2-color: #FFB950;
+    --act3-color: #9ced3f;
+
+    // detail color
+    --dimmer: rgba(0, 0, 0, 0.271);
+
+    // Typography
+    // font-weight
+    --regular: 400;
+    --medium: 500;
+    --semi-bold: 600;
+    --bold: 700;
+
+    // font sizes - Minor Third
+    --h1-fz: 2.488rem;
+    --h2-fz: 2.074rem;
+    --h3-fz: 1.728rem;
+    --h4-fz: 1.440rem;
+    --h5-fz: 1.2rem;
+    --regular-fz: 1rem;
+    --small-text: 0.833rem;
+    --tiny-text: 0.694rem;
+    --micro-text: 0.579rem;
+
+    @media screen and (min-width: 768px) {
+        // font sizes - Major Third
+        --h1-fz: 3.052rem;
+        --h2-fz: 2.441rem;
+        --h3-fz: 1.953rem;
+        --h4-fz: 1.563rem;
+        --h5-fz: 1.25rem;
+        --regular-fz: 1rem;
+        --small-text: 0.833rem;
+        --tiny-text: 0.694rem;
+        --micro-text: 0.579rem;
+    }
+
+    // @media screen and (min-width: 998px) {
+    //     // font sizes
+    //     --h1-fz: 4.209rem;
+    //     --h2-fz: 3.157rem;
+    //     --h3-fz: 2.369rem;
+    //     --h4-fz: 1.777rem;
+    //     --h5-fz: 1.333rem;
+    //     --regular-fz: 1rem;
+    //     --small-text: 0.833rem;
+    //     --tiny-text: 0.694rem;
+    //     --micro-text: 0.579rem;
+    // }
+
+
+
+
+}

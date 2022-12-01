@@ -1,0 +1,12 @@
+<h1>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</h1>
+<h2>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</h2>
+<h3>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</h3>
+<h4>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</h4>
+<h5>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</h5>
+<span>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</span>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+<p className='small-text'>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+<p className='tiny-text'>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+<p className='micro-text'>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+<button>Lorem ipsum</button>
+<a href="">Lorem ipsum</a>

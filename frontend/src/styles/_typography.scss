@@ -1,0 +1,49 @@
+h1, h2, h3, h4, h5, h6, p, span, a, button, input, select, option {
+    font-family: inherit;
+    color: inherit;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    font-weight: var(--bold);
+}
+
+h1, .h1 {
+    font-size: var(--h1-fz);
+}
+
+h2, .h2 {
+    font-size: var(--h2-fz);
+}
+
+h3, .h3 {
+    font-size: var(--h3-fz);
+}
+
+h4, .h4 {
+    font-size: var(--h4-fz);
+}
+
+h5, .h5 {
+    font-size: var(--h5-fz);
+}
+
+p, span, button, a {
+    font-size: var(--regular-fz);
+}
+
+.small-text {
+    font-size: var(--small-text);
+}
+
+.tiny-text {
+    font-size: var(--tiny-text);
+}
+
+.micro-text {
+    font-size: var(--micro-text);
+}
+
+.bx {
+    font-size: 1.6rem;
+}

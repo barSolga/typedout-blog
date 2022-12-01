@@ -6,6 +6,7 @@ import {
     loginUser,
     getAllUsers,
     getSingleUser,
+    getMe,
     updateUser,
     deleteUser
 } from '../controllers/user.controller'
@@ -13,7 +14,8 @@ import {
 const router: Router = express.Router();
 
 
-router.get('/login', loginUser);
+router.post('/login', loginUser);
+router.get('/me', protect, getMe);
 router.route('/').get(protect, getAllUsers).post(registerUser);
 router.route('/:id').get(protect, getSingleUser).put(protect, updateUser).delete(protect, deleteUser);
 

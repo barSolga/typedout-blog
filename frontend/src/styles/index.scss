@@ -1,0 +1,36 @@
+@import './variables';
+@import './mixins';
+@import './animations';
+@import './reset';
+
+@import './typography';
+@import './layout';
+@import './clickables';
+@import './form';
+
+// box effects
+.shadow {
+    filter: drop-shadow(0px 0px 20px rgba(0, 0, 0, 0.07));
+}
+
+// cards
+.card {
+    border-radius: 8px;
+    padding: 2rem;
+    background-color: var(--strong-color);
+}
+
+// alerts
+.alert {
+    padding: .7rem 2rem;
+    border-radius: 8px;
+}
+
+.alert-error {
+    background-color: rgb(255, 198, 198);
+    &__text {
+        color: rgb(182, 12, 12);
+    }
+}
+
+
